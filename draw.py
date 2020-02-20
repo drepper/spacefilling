@@ -4,7 +4,7 @@ import hilbert
 
 w = h = 640
 
-h256 = hilbert.HilbertCurve(129)
+h256 = hilbert.HilbertCurve(256)
 
 scalex = w / h256.width
 scaley = h / h256.height

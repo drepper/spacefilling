@@ -19,15 +19,18 @@ class HilbertCurve:
         quarter = int(all / 4)
         eighth = int(all / 8)
         req = quarter*int((self.sz+quarter-1)/quarter)
-        assert req != 1
         sub = int(req / quarter)
-        self.start = half - eighth * sub
+        assert sub != 1
+        if sub == 2:
+            self.start = quarter
+        else:
+            self.start = half - int(sz / 2)
         self.end = self.start + self.sz
-        self.height = int(self.n / 4) * sub
-        # self.width = self.n
-        self.width = max([x+1 for x,y in [self[i] for i in self.range()]])
+        self.height = self.n - min([y for x,y in [self._d_to_xy(i) for i in self.range()]])
+        self.width = max([x for x,y in [self._d_to_xy(i) for i in self.range()]]) + 1
 
-    def d_to_xy(self, d):
+    def _d_to_xy(self, d):
+        d += self.start
         x = y = 0
         s = 1;
         while s < self.n:
@@ -38,7 +41,7 @@ class HilbertCurve:
             y += s * ry
             s *= 2
             d = int(d / 4)
-        return x,y
+        return x, y
 
     def range(self):
         return range(self.sz)
@@ -46,12 +49,12 @@ class HilbertCurve:
     def __getitem__(self, key):
         if not type(key) == int or key < 0 or key >= (self.end - self.start):
             raise Exception("invalid index")
-        x,y = self.d_to_xy(self.start + key)
+        x,y = self._d_to_xy(key)
         return x, y - (self.n - self.height)
 
 def _coords(n):
     h = HilbertCurve(n)
-    return [h.d_to_xy(d) for d in range(n**2)]
+    return [h._d_to_xy(d) for d in range(n**2)]
 
 def compact(n):
     assert type(n) == int and n >= 2 and n & (n - 1) == 0
