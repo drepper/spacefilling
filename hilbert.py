@@ -1,12 +1,10 @@
 import math
 
 def _rot(n, x, y, rx, ry):
-    if (ry == 0):
-        if (rx == 1):
-            x = n - 1 - x
-            y = n - 1 - y
-        x,y = y,x
-    return x,y
+    if (rx == 1):
+        x = n - 1 - x
+        y = n - 1 - y
+    return y,x
 
 
 class HilbertCurve:
@@ -36,11 +34,13 @@ class HilbertCurve:
         while s < self.n:
             rx = int(d / 2) & 1
             ry = (d ^ rx) & 1
-            x,y = _rot(s, x, y, rx, ry)
+            if ry == 0:
+                x,y = _rot(s, x, y, rx, ry)
+            else:
+                y += s * ry
             x += s * rx
-            y += s * ry
             s *= 2
-            d = int(d / 4)
+            d >>= 2
         return x, y
 
     def range(self):
